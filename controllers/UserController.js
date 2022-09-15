@@ -1,6 +1,6 @@
 var User = require('../models/user');
 var bcrypt = require('bcrypt-nodejs');
-const user = require('../models/user');
+var User = require('../models/user');
 var jwt = require('../helpers/jwt');
 
 function registrar(req,res){
@@ -129,10 +129,27 @@ function get_user(req,res){
     });
 }
 
+function eliminar(req,res){
+    var id = req.params['id'];
+    User.findByIdAndDelete(id,(err,user_delete)=>{
+        if(user_delete){
+           res.status(200).send({
+            msg:'El usuario ha sido eliminado',
+            //user:user_delete
+           });
+        }else{
+            res.status(403).send({
+                mgs:'No se pudo completar la petición'
+            });
+        }
+    });
+}
+
 module.exports = {
     registrar,
     login,
     listar,
     editar,
-    get_user
+    get_user,
+    eliminar
 }

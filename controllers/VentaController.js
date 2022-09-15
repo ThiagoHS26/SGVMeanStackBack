@@ -16,8 +16,8 @@ function registrar(req, res){
         Producto.findById({_id:element.idproducto},(err,precio_producto)=>{
             if(precio_producto){
                 //calculo del subtotal 
-                detalleventa.subtotal = parseInt(precio_producto.precio_venta) * parseInt(element.cantidad);
-                suma_total = suma_total + parseInt(detalleventa.subtotal);
+                detalleventa.subtotal = parseFloat(precio_producto.precio_venta) * parseInt(element.cantidad);
+                suma_total = suma_total + parseFloat(detalleventa.subtotal);
                 detalleventa.venta = venta.id;
                 //Guardar el documento Detalle de venta
                 detalleventa.save((err,detalle_save)=>{

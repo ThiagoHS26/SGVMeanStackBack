@@ -9,6 +9,8 @@ var categoria_routes = require('./routes/categoria');
 var producto_routes = require('./routes/producto');
 var cliente_routes = require('./routes/cliente');
 var venta_routes = require('./routes/venta');
+var proveedor_routes = require('./routes/proveedor');
+var compra_routes = require('./routes/compra');
 
 var app = express();
 
@@ -40,6 +42,8 @@ app.use('/api',categoria_routes);
 app.use('/api',producto_routes);
 app.use('/api',cliente_routes);
 app.use('/api',venta_routes);
+app.use('/api',proveedor_routes);
+app.use('/api',compra_routes);
 
 //exportar modulo
 module.exports = app;
