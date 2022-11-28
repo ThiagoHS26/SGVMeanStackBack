@@ -1,7 +1,7 @@
 var express = require('express');
 const { model } = require('mongoose');
 var userController = require('../controllers/UserController');
-
+var jwt = require ('../helpers/jwt');
 var api = express.Router();
 
 api.post('/registrar',userController.registrar);

@@ -5,11 +5,11 @@ var UserSchema = Schema({
 
     //atributos
     nombres: String,
-    apellidos: String,
+    usuario: String,
     email: String,
     password: String,
-    role:String
-
+    role:String,
+    createAt: {type: Date, default:Date.now}
 });
 
 module.exports = mongoose.model('user',UserSchema);

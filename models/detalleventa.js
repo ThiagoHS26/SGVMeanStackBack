@@ -7,7 +7,8 @@ var DetalleVentaSchema = Schema({
     idproducto: {type: Schema.ObjectId, ref: 'producto'},
     cantidad: Number,
     subtotal: Number,
-    venta: {type:Schema.ObjectId, ref:'venta'}
+    venta: {type:Schema.ObjectId, ref:'venta'},
+    createAt: {type: Date, default:Date.now}
 });
 
 module.exports = mongoose.model('detalleventa',DetalleVentaSchema);

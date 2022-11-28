@@ -2,6 +2,9 @@ var express = require('express');
 var bodyparser = require('body-parser');
 var mongoose = require('mongoose');
 var port = process.env.PORT || 4201;
+var https = require('https');
+var fs = require('fs');
+var path = require('path');
 
 //Routes
 var user_routes = require('./routes/user');
@@ -18,13 +21,14 @@ mongoose.connect('mongodb://localhost:27017/heredia_storeDB',{useUnifiedTopology
     if(err){
         throw err;
     }else{
-        console.log("Servidor corriendo");
+        console.log("Server running!");
         app.listen(port, function(){
-            console.log("Servidor conectado en "+port);
+            console.log("Servidor connected to MongoDB by port: "+port);
         });
     }
 });
 
+//app.use(cors);
 app.use(bodyparser.urlencoded({extended: true}));
 app.use(bodyparser.json());
 
@@ -36,6 +40,16 @@ app.use((req,res,next)=>{
     res.header('Allow','GET, PUT, POST, DELETE, OPTIONS');
     next();
 });
+
+/*Servidor SSL 
+    https://localhost:3443 
+var sslServer = https.createServer(
+    {
+        key: fs.readFileSync(path.join(__dirname,'cert','key.pem')),
+        cert: fs.readFileSync(path.join(__dirname,'cert','cert.pem'))
+    }
+);
+sslServer.listen(3443,()=>console.log("Secure Server on port 3443"));*/
 
 app.use('/api',user_routes);
 app.use('/api',categoria_routes);

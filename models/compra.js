@@ -7,8 +7,9 @@ var CompraSchema = Schema({
     idproveedor: {type: Schema.ObjectId, ref: 'proveedor'},
     iduser: {type: Schema.ObjectId, ref: 'user'},
     total: Number,
+    tipo_documento:String,
     factura : String,
-    fecha: {type: Date, default: Date.now},
+    fecha: {type: Date, default:Date.now}
 });
 
 module.exports = mongoose.model('compra',CompraSchema);

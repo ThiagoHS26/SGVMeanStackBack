@@ -3,57 +3,38 @@ var fs = require('fs');
 var path = require('path');
 
 function registrar(req, res){
-    var data = req.body;
+    let data = req.body;
+    let producto = new Producto();
+        
+    producto.codigo = data.codigo;
+    producto.titulo = data.titulo;
+    producto.marca = data.marca;
+    producto.descripcion = data.descripcion;
+    producto.precio_compra = data.precio_compra;
+    producto.precio_venta = data.precio_venta;
+    producto.stock = 0;
+    producto.idcategoria = data.idcategoria;
+    producto.puntos = 0;
 
-    if(req.files){
-        var imagen_path = req.files.imagen.path;
-        var name = imagen_path.split('\\');
-        var imagen_name = name[2];
-
-        var producto = new Producto();
-        producto.titulo = data.titulo;
-        producto.descripcion = data.descripcion;
-        producto.imagen = imagen_name;
-        producto.precio_compra = data.precio_compra;
-        producto.precio_venta = data.precio_venta;
-        producto.stock = data.stock;
-        producto.idcategoria = data.idcategoria;
-        producto.puntos = data.puntos;
-
-        producto.save((err,producto_save)=>{
-            if(err){
-                res.status(500).send({message: 'Error en el servidor'});
+    producto.save((err,producto_save)=>{
+        if(err){
+            res.status(500).send({
+                msg: 'Error en el servidor!'
+            });
+        }else{
+            if(producto_save){
+                res.status(200).send({
+                    msg:'Producto registrado correctamente!',
+                    produto: producto_save
+                });
             }else{
-                if(producto_save){
-                    res.status(200).send({produto: producto_save});
-                }else{
-                    res.status(403).send({message: 'No se registro el producto'}); 
-                }
+                res.status(402).send({
+                    message: 'No se registró el producto!'
+                }); 
             }
-        });
-    }else{
-        var producto = new Producto();
-        producto.titulo = data.titulo;
-        producto.descripcion = data.descripcion;
-        producto.imagen = null;
-        producto.precio_compra = data.precio_compra;
-        producto.precio_venta = data.precio_venta;
-        producto.stock = data.stock;
-        producto.idcategoria = data.idcategoria;
-        producto.puntos = data.puntos;
+        }
+    });
 
-        producto.save((err,producto_save)=>{
-            if(err){
-                res.status(500).send({message: 'Error en el servidor'});
-            }else{
-                if(producto_save){
-                    res.status(200).send({produto: producto_save});
-                }else{
-                    res.status(403).send({message: 'No se registro el producto'}); 
-                }
-            }
-        });
-    }
 }
 
 function listar(req, res){
@@ -67,6 +48,7 @@ function listar(req, res){
         }else{
             if(productos_listado){
                 res.status(200).send({
+                    msg:'Producto por nombre!',
                     productos: productos_listado
                 });
             }else{
@@ -79,65 +61,37 @@ function listar(req, res){
 }
 
 function editar(req, res){
-    var data = req.body;
-    var id = req.params['id'];
-    var img = req.params['img'];
+    let data = req.body;
+    let id = req.params['id'];
 
-    if(req.files.imagen){
-
-        if(img || img != null || img != undefined){
-
-            fs.unlink('./uploads/productos/'+img, (err)=>{
-                if(err) throw err;
+    Producto.findByIdAndUpdate({_id: id},{
+        codigo:data.codigo,
+        titulo:data.titulo,
+        marca:data.marca,
+        descripcion:data.descripcion,
+        precio_compra:data.precio_compra,
+        precio_venta:data.precio_venta,
+        stock : data.stock,
+        idcategoria:data.idcategoria,
+        puntos:data.puntos
+    },(err,producto_edit)=>{
+        if(err){
+            res.status(500).send({
+                msg:'Error en el servidor!'
             });
-
+        }else{
+            if(producto_edit){
+                res.status(200).send({
+                    msg:'Producto actualizado correctamente!',
+                    productos: producto_edit
+                });
+            }else{
+                res.status(403).send({
+                    msg:'No se edito el producto!'
+                });
+            }
         }
-
-        var imagen_path = req.files.imagen.path;
-        var name = imagen_path.split('\\');
-        var imagen_name = name[2];
-
-        Producto.findByIdAndUpdate({_id: id},{titulo:data.titulo,descripcion:data.descripcion,
-            imagen:imagen_name,precio_compra:data.precio_compra,precio_venta:data.precio_venta,
-            idcategoria:data.idcategoria,puntos:data.puntos},(err,producto_edit)=>{
-                if(err){
-                    res.status(500).send({
-                        msg:'Error en el servidor'
-                    });
-                }else{
-                    if(producto_edit){
-                        res.status(200).send({
-                            productos: producto_edit
-                        });
-                    }else{
-                        res.status(403).send({
-                            msg:'No se edito el producto'
-                        });
-                    }
-                }
-        });
-    }else{
-        Producto.findByIdAndUpdate({_id: id},{titulo:data.titulo,descripcion:data.descripcion,
-            precio_compra:data.precio_compra,precio_venta:data.precio_venta,
-            stock:data.stock,idcategoria:data.idcategoria,puntos:data.puntos},(err,producto_edit)=>{
-                if(err){
-                    res.status(500).send({
-                        msg:'Error en el servidor'
-                    });
-                }else{
-                    if(producto_edit){
-                        res.status(200).send({
-                            productos: producto_edit
-                        });
-                    }else{
-                        res.status(403).send({
-                            msg:'No se edito el producto'
-                        });
-                    }
-                }
-        });
-    }
-
+    });
     
 }
 
@@ -152,6 +106,7 @@ function obtener_producto(req,res){
         }else{
             if(producto_data){
                 res.status(200).send({
+                    msg:'Producto por id',
                     producto: producto_data
                 });
             }else{
@@ -169,19 +124,16 @@ function eliminar(req,res){
     Producto.findByIdAndRemove({_id:id},(err,producto_delete)=>{
         if(err){
             res.status(500).send({
-                msg:'Error en el servidor'
+                msg:'Error en el servidor!'
             });
         }else{
             if(producto_delete){
-                fs.unlink('./uploads/productos/'+producto_delete.imagen, (err)=>{
-                    if(err) throw err;
-                });
                 res.status(200).send({
-                    producto: producto_delete
+                    msgn:'Producto eliminado correctamente!'
                 });
             }else{
                 res.status(403).send({
-                    msg:'No se elimino ningun producto'
+                    msg:'No se elimino ningun producto!'
                 });
             }
         }
@@ -192,6 +144,25 @@ function update_stock(req,res){
     let id = req.params['id'];
     let data = req.body;
 
+    Producto.findByIdAndUpdate({_id:id},{stock:data.stock},
+        (err,data)=>{
+            if(err){
+                res.status(500).json({
+                    msg:'Error en el servidor!'
+                });
+            }else if(!data){
+                res.status(400).json({
+                    msg:'No se encontró el producto!'
+                });
+            }else{
+                res.status(200).send({
+                    msg:'Stock actualizado!',
+                    stock:data
+                });
+            }
+        });
+
+        /*
     Producto.findById(id, (err,producto_data)=>{
         if(producto_data){
             Producto.findByIdAndUpdate(id,{stock:parseInt(producto_data.stock)+parseInt(data.stock)},(err,producto_edit)=>{
@@ -206,7 +177,7 @@ function update_stock(req,res){
                 err
             });
         }
-    });
+    });*/
 }
 
 function get_img(req,res){

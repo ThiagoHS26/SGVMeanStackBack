@@ -7,7 +7,9 @@ var VentaSchema = Schema({
     idcliente: {type: Schema.ObjectId, ref: 'cliente'},
     iduser: {type: Schema.ObjectId, ref: 'user'},
     total: Number,
-    fecha: {type: Date, default: Date.now},
+    tipo_documento:String,
+    factura:String,
+    fecha: {type: Date, default:Date.now}
 });
 
 module.exports = mongoose.model('venta',VentaSchema);

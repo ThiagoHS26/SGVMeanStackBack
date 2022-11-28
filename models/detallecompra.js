@@ -7,8 +7,8 @@ var DetalleCompraSchema = Schema({
     idproducto: {type: Schema.ObjectId, ref: 'producto'},
     cantidad: Number,
     subtotal: Number,
-    compra: {type:Schema.ObjectId, ref:'compra'}
-    //agregar imagen de la factura (opcional)
+    compra: {type:Schema.ObjectId, ref:'compra'},
+    createAt: {type: Date, default:Date.now}
 });
 
 module.exports = mongoose.model('detallecompra',DetalleCompraSchema);
